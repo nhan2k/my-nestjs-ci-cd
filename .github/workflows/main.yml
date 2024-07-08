@@ -31,13 +31,13 @@ jobs:
       run: pnpm install
 
     - name: Run lint
-      run: pnpm run lint
+      run: pnpm lint
 
     - name: Run tests
-      run: pnpm run test
+      run: pnpm test
 
     - name: Build project
-      run: pnpm run build
+      run: pnpm build
 
     - name: Snyk Security Scan
       env:
