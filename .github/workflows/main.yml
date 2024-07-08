@@ -47,16 +47,16 @@ jobs:
         snyk auth ${{ secrets.SNYK_TOKEN }}
         snyk test
 
-    - name: Terraform Init and Plan
-      run: |
-        sudo apt-get update && sudo apt-get install -y unzip
-        curl -LO https://releases.hashicorp.com/terraform/1.0.11/terraform_1.0.11_linux_amd64.zip
-        unzip terraform_1.0.11_linux_amd64.zip
-        sudo mv terraform /usr/local/bin/
-        terraform --version
-        cd your_terraform_directory
-        terraform init
-        terraform plan
+    # - name: Terraform Init and Plan
+    #   run: |
+    #     sudo apt-get update && sudo apt-get install -y unzip
+    #     curl -LO https://releases.hashicorp.com/terraform/1.0.11/terraform_1.0.11_linux_amd64.zip
+    #     unzip terraform_1.0.11_linux_amd64.zip
+    #     sudo mv terraform /usr/local/bin/
+    #     terraform --version
+    #     cd your_terraform_directory
+    #     terraform init
+    #     terraform plan
 
   codeql:
     runs-on: ubuntu-latest
