@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+  schedule:
+    - cron: '0 0 * * *' # Weekly scan
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.15.0'
+
+    - name: Install pnpm
+      run: npm install -g pnpm
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Run lint
+      run: pnpm run lint
+
+    - name: Run tests
+      run: pnpm run test
+
+    - name: Build project
+      run: pnpm run build
+
+    - name: Snyk Security Scan
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: |
+        pnpm install -g snyk
+        snyk auth ${{ secrets.SNYK_TOKEN }}
+        snyk test
+
+    - name: Terraform Init and Plan
+      run: |
+        sudo apt-get update && sudo apt-get install -y unzip
+        curl -LO https://releases.hashicorp.com/terraform/1.0.11/terraform_1.0.11_linux_amd64.zip
+        unzip terraform_1.0.11_linux_amd64.zip
+        sudo mv terraform /usr/local/bin/
+        terraform --version
+        cd your_terraform_directory
+        terraform init
+        terraform plan
+
+  codeql:
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
