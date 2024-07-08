@@ -39,11 +39,14 @@ jobs:
     - name: Build project
       run: pnpm build
 
+    - name: Setup Snyk
+      run: pnpm setup
+
     - name: Snyk Security Scan
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       run: |
-        pnpm install -g snyk
+        npm install -g snyk
         snyk auth ${{ secrets.SNYK_TOKEN }}
         snyk test
 
